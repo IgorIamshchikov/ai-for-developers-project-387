@@ -34,7 +34,7 @@ function groupByDay(slots: Slot[]): Day[] {
       days.push({
         key,
         date: new Date(startsAt.getFullYear(), startsAt.getMonth(), startsAt.getDate()),
-        label: startsAt.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }),
+        label: formatDate(slot.startsAt),
         slots: [slot],
       })
     }
