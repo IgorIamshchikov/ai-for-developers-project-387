@@ -34,13 +34,17 @@ function groupByDay(slots: Slot[]): Day[] {
       days.push({
         key,
         date: new Date(startsAt.getFullYear(), startsAt.getMonth(), startsAt.getDate()),
-        label: startsAt.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }),
+        label: formatDate(slot.startsAt),
         slots: [slot],
       })
     }
   }
 
   return days.sort((a, b) => a.date.getTime() - b.date.getTime())
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
 }
 
 function formatTime(iso: string) {
@@ -276,7 +280,7 @@ function Booking() {
         <>
           <h1 className="text-2xl font-bold">Бронирование подтверждено</h1>
           <p>
-            {selectedEventType?.title} — {formatTime(confirmedBooking.startsAt)}
+            {selectedEventType?.title} — {formatDate(confirmedBooking.startsAt)}, {formatTime(confirmedBooking.startsAt)}
           </p>
           <p className="text-sm text-muted-foreground">
             {confirmedBooking.visitorName}, {confirmedBooking.visitorEmail}
