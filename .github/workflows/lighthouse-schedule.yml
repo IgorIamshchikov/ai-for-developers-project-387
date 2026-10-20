@@ -1,0 +1,57 @@
+name: Lighthouse Schedule
+
+on:
+  schedule:
+    # 03:00 UTC = 06:00 по Москве, раз в сутки
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Run Lighthouse
+        id: lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: ${{ vars.APP_URL }}
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Run Claude Code triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Событие schedule не несёт инструкции от человека, поэтому задача
+          # задаётся здесь (см. AGENTS.md и docs/agents/triage-labels.md).
+          prompt: |
+            Lighthouse проверил ${{ vars.APP_URL }} и вернул сводку по прогону:
+            ${{ steps.lighthouse.outputs.manifest }}
+
+            Разбери summary по каждой странице (performance, accessibility,
+            best-practices, seo): какие метрики ниже 0.9, в чём вероятная
+            причина (конкретные ресурсы, размеры, запросы — если они видны
+            в отчёте по ссылке на отчёт из manifest).
+
+            Если нашлась хотя бы одна метрика ниже 0.9 — заведи одну issue
+            по самой значимой находке: заголовок — короткая суть проблемы,
+            тело — метрика и текущее значение, вероятная причина,
+            предлагаемый путь исправления, ссылка на полный прогон
+            (${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+
+            Если все метрики выше 0.9 — issue не создавай, просто опиши это
+            в логе шага.
+
+          claude_args: '--allowedTools "Bash(gh issue create:*),Bash(gh issue list:*)"'
