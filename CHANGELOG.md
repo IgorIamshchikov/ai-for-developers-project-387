@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.1](https://github.com/IgorIamshchikov/ai-for-developers-project-387/compare/v1.4.0...v1.4.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* persist-credentials: false в checkout воркфлоу Claude ([487ab7a](https://github.com/IgorIamshchikov/ai-for-developers-project-387/commit/487ab7a8400a53724799602e0cd9075a99d856c8))
+* добавлен persist-credentials: false в checkout воркфлоу Claude ([2c323f8](https://github.com/IgorIamshchikov/ai-for-developers-project-387/commit/2c323f8e6ce3d5072b13141a22cfb0079af478e8))
+* на экране подтверждения показана дата встречи ([#8](https://github.com/IgorIamshchikov/ai-for-developers-project-387/issues/8)) ([3087969](https://github.com/IgorIamshchikov/ai-for-developers-project-387/commit/3087969d346a90b0d70ae4b164dbaf3e4ec0b746))
+* на экране подтверждения показана дата встречи ([#8](https://github.com/IgorIamshchikov/ai-for-developers-project-387/issues/8)) ([9cc8aeb](https://github.com/IgorIamshchikov/ai-for-developers-project-387/commit/9cc8aeb1f051a1fa31f1935ffb16a8dec0357d68))
+* слот в прошлом возвращает 409 slot_unavailable вместо 422 ([12dec72](https://github.com/IgorIamshchikov/ai-for-developers-project-387/commit/12dec722d3e2e64b88abbf25d530332e8d111a2c))
+* слот в прошлом возвращает 409 slot_unavailable вместо 422 ([#9](https://github.com/IgorIamshchikov/ai-for-developers-project-387/issues/9)) ([4f9b021](https://github.com/IgorIamshchikov/ai-for-developers-project-387/commit/4f9b021e8a3ae4a64423070c7b7bd2628c578306))
+
 ## [1.4.0](https://github.com/IgorIamshchikov/ai-for-developers-project-386/compare/v1.3.0...v1.4.0) (2026-10-18)
 
 
