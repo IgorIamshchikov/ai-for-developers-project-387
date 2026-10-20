@@ -1,0 +1,45 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Run Claude Code triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Событие issues не несёт команды от человека, поэтому инструкция
+          # задаётся здесь, в воркфлоу (см. AGENTS.md и docs/agents/triage-labels.md).
+          prompt: |
+            Разбери новое issue №${{ github.event.issue.number }} в этом репозитории
+            (gh issue view ${{ github.event.issue.number }}).
+
+            Определи вероятную причину, затронутые части кода и предлагаемый путь
+            исправления. Если описания недостаточно для разбора — честно напиши,
+            какой информации не хватает.
+
+            По итогу повесь ровно одну triage-метку (docs/agents/triage-labels.md):
+            - needs-info — если в issue не хватает данных для разбора;
+            - ready-for-agent — если постановка уже достаточна, чтобы агент взял
+              задачу в работу (понятна причина и путь исправления);
+            - needs-triage — если разбор сделан, но решение требует решения
+              человека (неоднозначные варианты, продуктовый выбор и т.п.).
+
+            Оставь комментарий к issue с разбором и названием выбранной метки.
+
+          claude_args: '--allowedTools "Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh issue edit:*)"'
