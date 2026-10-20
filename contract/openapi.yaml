@@ -33,9 +33,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SlotTakenError'
+                anyOf:
+                  - $ref: '#/components/schemas/SlotTakenError'
+                  - $ref: '#/components/schemas/SlotUnavailableError'
         '422':
-          description: 'Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/в прошлом/вне окна.'
+          description: 'Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/вне окна.'
           content:
             application/json:
               schema:
@@ -85,7 +87,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EventType'
         '422':
-          description: 'Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/в прошлом/вне окна.'
+          description: 'Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/вне окна.'
           content:
             application/json:
               schema:
@@ -276,6 +278,24 @@ components:
             - code
             - message
       description: Слот занят — гонка двух бронирований на одно время.
+    SlotUnavailableError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - slot_unavailable
+            message:
+              type: string
+          required:
+            - code
+            - message
+      description: Слот был свободен при выборе, но к моменту отправки формы уже в прошлом.
     ValidationError:
       type: object
       required:
@@ -293,4 +313,4 @@ components:
           required:
             - code
             - message
-      description: 'Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/в прошлом/вне окна.'
+      description: 'Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/вне окна.'

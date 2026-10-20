@@ -32,12 +32,22 @@ model SlotTakenError {
   };
 }
 
-/** Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/в прошлом/вне окна. */
+/** Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/вне окна. */
 @error
 model ValidationError {
   @statusCode statusCode: 422;
   error: {
     code: "validation";
+    message: string;
+  };
+}
+
+/** Слот был свободен при выборе, но к моменту отправки формы уже в прошлом. */
+@error
+model SlotUnavailableError {
+  @statusCode statusCode: 409;
+  error: {
+    code: "slot_unavailable";
     message: string;
   };
 }
@@ -145,7 +155,7 @@ interface CalendarApi {
   createBooking(@body body: BookingCreate): {
     @statusCode statusCode: 201;
     @body booking: Booking;
-  } | SlotTakenError | ValidationError | NotFoundError;
+  } | SlotTakenError | SlotUnavailableError | ValidationError | NotFoundError;
 
   /** Предстоящие встречи владельца, одним списком по возрастанию `startsAt`. */
   @get

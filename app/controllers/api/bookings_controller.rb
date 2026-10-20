@@ -11,6 +11,8 @@ module Api
 
       if booking.save
         render json: booking_json(booking), status: :created
+      elsif booking.errors.where(:starts_at, :in_the_past).any?
+        render json: { error: { code: "slot_unavailable", message: "This slot is no longer available" } }, status: :conflict
       else
         render json: validation_error(booking), status: :unprocessable_content
       end

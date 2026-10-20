@@ -40,7 +40,7 @@ class Booking < ApplicationRecord
   def starts_at_in_future
     return if starts_at.blank?
 
-    errors.add(:starts_at, "must be in the future") if starts_at <= Time.current
+    errors.add(:starts_at, :in_the_past, message: "must be in the future") if starts_at <= Time.current
   end
 
   def starts_at_within_window
