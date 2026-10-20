@@ -84,7 +84,17 @@ export type SlotTakenError = {
 };
 
 /**
- * Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/в прошлом/вне окна.
+ * Слот был свободен при выборе, но к моменту отправки формы уже в прошлом.
+ */
+export type SlotUnavailableError = {
+    error: {
+        code: 'slot_unavailable';
+        message: string;
+    };
+};
+
+/**
+ * Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/вне окна.
  */
 export type ValidationError = {
     error: {
@@ -124,9 +134,9 @@ export type CalendarApiCreateBookingErrors = {
     /**
      * Слот занят — гонка двух бронирований на одно время.
      */
-    409: SlotTakenError;
+    409: SlotTakenError | SlotUnavailableError;
     /**
-     * Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/в прошлом/вне окна.
+     * Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/вне окна.
      */
     422: ValidationError;
 };
@@ -167,7 +177,7 @@ export type CalendarApiCreateEventTypeData = {
 
 export type CalendarApiCreateEventTypeErrors = {
     /**
-     * Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/в прошлом/вне окна.
+     * Невалидный запрос: пустые поля, некорректный email, `startsAt` не на границе сетки/вне окна.
      */
     422: ValidationError;
 };

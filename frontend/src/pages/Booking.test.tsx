@@ -78,6 +78,22 @@ describe('Гостевой флоу бронирования', () => {
     expect(calendarApiListSlots).toHaveBeenCalledTimes(2)
   })
 
+  it('при slot_unavailable возвращает к выбору даты и времени с сообщением', async () => {
+    vi.mocked(calendarApiListEventTypes).mockResolvedValue({ data: [eventType], error: undefined })
+    vi.mocked(calendarApiListSlots).mockResolvedValue({ data: [slot], error: undefined })
+    vi.mocked(calendarApiCreateBooking).mockResolvedValue({
+      data: undefined,
+      error: { error: { code: 'slot_unavailable', message: 'This slot is no longer available' } },
+    })
+
+    await selectSlot()
+    fireEvent.click(screen.getByRole('button', { name: 'Записаться' }))
+
+    expect(await screen.findByText('Это время больше недоступно, выберите другое')).toBeDefined()
+    expect(screen.getByText('Выберите дату и время')).toBeDefined()
+    expect(calendarApiListSlots).toHaveBeenCalledTimes(2)
+  })
+
   it('кнопка "Назад" со схемы даты/времени возвращает к списку типов событий', async () => {
     vi.mocked(calendarApiListEventTypes).mockResolvedValue({ data: [eventType], error: undefined })
     vi.mocked(calendarApiListSlots).mockResolvedValue({ data: [slot], error: undefined })

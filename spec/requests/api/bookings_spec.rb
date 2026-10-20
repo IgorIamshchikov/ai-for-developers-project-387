@@ -136,7 +136,17 @@ RSpec.describe "Api::Bookings", type: :request do
     describe "когда startsAt в прошлом" do
       before { book(startsAt: "2026-01-01T09:30:00Z") }
 
-      it_behaves_like "ошибка валидации бронирования"
+      it "возвращает 409" do
+        expect(response).to have_http_status(:conflict)
+      end
+
+      it "соответствует контракту" do
+        assert_response_conforms
+      end
+
+      it "возвращает код ошибки slot_unavailable" do
+        expect(response.parsed_body["error"]["code"]).to eq("slot_unavailable")
+      end
     end
 
     describe "когда startsAt вне 14-дневного окна" do

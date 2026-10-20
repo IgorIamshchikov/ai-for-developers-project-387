@@ -62,7 +62,7 @@ function Booking() {
   const [visitorName, setVisitorName] = useState('')
   const [visitorEmail, setVisitorEmail] = useState('')
   const [confirmedBooking, setConfirmedBooking] = useState<BookingResource | null>(null)
-  const [slotTaken, setSlotTaken] = useState(false)
+  const [slotNotice, setSlotNotice] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const availableDayKeys = useMemo(() => new Set(days.map((day) => day.key)), [days])
@@ -83,7 +83,7 @@ function Booking() {
   async function selectEventType(eventType: EventType) {
     setSelectedEventType(eventType)
     setSelectedSlot(null)
-    setSlotTaken(false)
+    setSlotNotice(null)
     setError(null)
 
     const fetchedDays = await fetchDays(eventType)
@@ -96,12 +96,12 @@ function Booking() {
   function selectDay(day: Day) {
     setSelectedDay(day)
     setSelectedSlot(null)
-    setSlotTaken(false)
+    setSlotNotice(null)
   }
 
   function selectSlot(slot: Slot) {
     setSelectedSlot(slot)
-    setSlotTaken(false)
+    setSlotNotice(null)
   }
 
   function continueToForm() {
@@ -114,7 +114,7 @@ function Booking() {
   }
 
   function goBackToSchedule() {
-    setSlotTaken(false)
+    setSlotNotice(null)
     setError(null)
     setStep('schedule')
   }
@@ -134,8 +134,12 @@ function Booking() {
     })
 
     if (apiError) {
-      if (apiError.error.code === 'slot_taken') {
-        setSlotTaken(true)
+      if (apiError.error.code === 'slot_taken' || apiError.error.code === 'slot_unavailable') {
+        setSlotNotice(
+          apiError.error.code === 'slot_taken'
+            ? 'Слот уже занят, выберите другое время'
+            : 'Это время больше недоступно, выберите другое',
+        )
         setSelectedSlot(null)
         setStep('schedule')
         await fetchDays(selectedEventType)
@@ -204,7 +208,7 @@ function Booking() {
               <h2 className="font-medium capitalize">
                 {selectedDay ? selectedDay.label : 'Нет доступных дат'}
               </h2>
-              {slotTaken && <p className="text-destructive">Слот уже занят, выберите другое время</p>}
+              {slotNotice && <p className="text-destructive">{slotNotice}</p>}
               <ul className="flex flex-wrap gap-2">
                 {selectedDaySlots.map((slot) => (
                   <li key={slot.startsAt}>
