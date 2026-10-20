@@ -11,6 +11,7 @@
 ## Коммиты и ветки
 
 - Коммиты (включая коммиты агента) пишутся по Conventional Commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`, `ci:`, `feat!:` для ломающих изменений; описание по-русски, например `feat: добавлен каркас бэкенда`. На их основе release-please собирает changelog и релизы по semver после мержа в основную ветку `develop`.
+- Если изменение связано с GitHub issue, указывай номер тикета в коммите: в конце первой строки (`feat: добавлен каркас бэкенда (#NN)`) или в теле (`Closes #NN` / `Refs #NN`).
 - Ветки называются по типу коммита: `feat/backend-skeleton`, `test/smoke-test`, `docs/agents`.
 - Агент не делает коммитов и пушей сам — только по явному указанию пользователя.
 - Изменения сдаются через отдельные ветки и PR в `develop` — по одному PR на задачу, последовательно, не всё сразу.
@@ -24,12 +25,14 @@
 - Тесты бекенда — RSpec (`spec/`); дымовой тест — `GET /up` → 200; каждая спека начинается с `require "rails_helper"`.
 - Линтеры: бекенд — RuboCop (omakase + rubocop-rspec), Brakeman, bundler-audit — всё разом через `bin/ci` (список шагов в `config/ci.rb`); фронтенд — Oxlint (`.oxlintrc.json`), проверка типов — `tsc -b` внутри `npm run build`.
 - CI: `.github/workflows/ci.yml` — тесты и линтеры на каждый пуш и PR; `release-please.yml` — релизы по semver из истории коммитов.
+- Контракт API — TypeSpec (`contract/main.tsp`) → OpenAPI (`contract/openapi.yaml`) → клиентский SDK фронтенда (`frontend/src/api`) и Rails-артефакты (`config/routes/api.rb`, `app/generated/api_params.rb`, генератор — `contract/generate-rails.mjs`). Вся цепочка — одной командой `./script/generate`; эти файлы не правятся руками, только перегенерируются.
 
 ## Команды
 
 Локально Ruby и npm не используются — всё запускается в Docker:
 
 - Запуск: `docker compose up -d` (db + web + frontend). Здоровье: `curl localhost:3000/up` → 200, `curl localhost:5173/` → 200.
+- Регенерация контракта после правки `contract/main.tsp`: `./script/generate` (TypeSpec → OpenAPI → SDK фронтенда → маршруты и allow-list параметров бекенда).
 - Тесты: `docker compose run --rm -e RAILS_ENV=test web bash -c "bin/rails db:prepare && bin/rspec"`.
 - Тесты фронтенда: `docker compose run --rm --no-deps frontend npm run test` (Vitest + React Testing Library).
 - Локальный CI целиком: `docker compose run --rm web bin/ci` (setup → тесты → rubocop → bundler-audit → brakeman).
