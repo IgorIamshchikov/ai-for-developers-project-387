@@ -52,6 +52,7 @@ describe('Гостевой флоу бронирования', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Записаться' }))
 
     expect(await screen.findByText('Бронирование подтверждено')).toBeDefined()
+    expect(screen.getByText(/1 января/)).toBeDefined()
     expect(calendarApiCreateBooking).toHaveBeenCalledWith({
       body: {
         eventTypeId: eventType.id,

@@ -43,6 +43,10 @@ function groupByDay(slots: Slot[]): Day[] {
   return days.sort((a, b) => a.date.getTime() - b.date.getTime())
 }
 
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
+}
+
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
 }
@@ -276,7 +280,7 @@ function Booking() {
         <>
           <h1 className="text-2xl font-bold">Бронирование подтверждено</h1>
           <p>
-            {selectedEventType?.title} — {formatTime(confirmedBooking.startsAt)}
+            {selectedEventType?.title} — {formatDate(confirmedBooking.startsAt)}, {formatTime(confirmedBooking.startsAt)}
           </p>
           <p className="text-sm text-muted-foreground">
             {confirmedBooking.visitorName}, {confirmedBooking.visitorEmail}
