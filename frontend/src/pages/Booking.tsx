@@ -51,6 +51,10 @@ function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
 }
 
+function timeZoneNote() {
+  return `Время указано в вашем часовом поясе: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`
+}
+
 function nearestAvailableDay(fetchedDays: Day[]): Day | null {
   return fetchedDays[0] ?? null
 }
@@ -230,6 +234,7 @@ function Booking() {
                   </li>
                 ))}
               </ul>
+              <p className="text-sm text-muted-foreground">{timeZoneNote()}</p>
               <Button
                 type="button"
                 size="lg"
@@ -282,6 +287,7 @@ function Booking() {
           <p>
             {selectedEventType?.title} — {formatDate(confirmedBooking.startsAt)}, {formatTime(confirmedBooking.startsAt)}
           </p>
+          <p className="text-sm text-muted-foreground">{timeZoneNote()}</p>
           <p className="text-sm text-muted-foreground">
             {confirmedBooking.visitorName}, {confirmedBooking.visitorEmail}
           </p>

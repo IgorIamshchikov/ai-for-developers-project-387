@@ -63,6 +63,18 @@ describe('Гостевой флоу бронирования', () => {
     })
   })
 
+  it('подписывает часовой пояс рядом со слотами', async () => {
+    vi.mocked(calendarApiListEventTypes).mockResolvedValue({ data: [eventType], error: undefined })
+    vi.mocked(calendarApiListSlots).mockResolvedValue({ data: [slot], error: undefined })
+
+    render(<Booking />)
+    fireEvent.click(await screen.findByText('Знакомство'))
+    await screen.findByText(timeLabel)
+
+    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    expect(screen.getByText(`Время указано в вашем часовом поясе: ${zone}`)).toBeDefined()
+  })
+
   it('при slot_taken возвращает к выбору даты и времени с сообщением', async () => {
     vi.mocked(calendarApiListEventTypes).mockResolvedValue({ data: [eventType], error: undefined })
     vi.mocked(calendarApiListSlots).mockResolvedValue({ data: [slot], error: undefined })
