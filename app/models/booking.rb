@@ -33,8 +33,8 @@ class Booking < ApplicationRecord
   def starts_at_on_grid
     return if starts_at.blank?
 
-    aligned = starts_at.sec.zero? && starts_at.usec.zero? && (starts_at.min % 30).zero?
-    errors.add(:starts_at, "must fall on the 30-minute grid") unless aligned
+    aligned = starts_at.sec.zero? && starts_at.usec.zero? && (starts_at.min % GRID_STEP.in_minutes.to_i).zero?
+    errors.add(:starts_at, "must fall on the #{GRID_STEP.in_minutes.to_i}-minute grid") unless aligned
   end
 
   def starts_at_in_future
@@ -46,6 +46,6 @@ class Booking < ApplicationRecord
   def starts_at_within_window
     return if starts_at.blank?
 
-    errors.add(:starts_at, "must be within the 14-day booking window") if starts_at >= self.class.window_end
+    errors.add(:starts_at, "must be within the #{WINDOW_DAYS}-day booking window") if starts_at >= self.class.window_end
   end
 end
