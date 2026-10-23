@@ -6,6 +6,8 @@ on:
 
 jobs:
   triage:
+    # issue от ботов (в т.ч. claude[bot]) не триажим
+    if: github.event.sender.type != 'Bot'
     runs-on: ubuntu-latest
     permissions:
       contents: read

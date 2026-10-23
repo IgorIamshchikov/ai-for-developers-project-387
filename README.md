@@ -8,6 +8,8 @@
 Учебный проект Хекслета: https://ru.hexlet.io/programs/ai-for-developers
 Как это должно работать: https://files.hexlet.app/a/2ipc5m
 
+Опубликованный сервис: https://web-production-494b5.up.railway.app/
+
 ## Стек
 
 - Разное
